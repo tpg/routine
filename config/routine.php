@@ -7,6 +7,9 @@ use TPG\Routine\Contracts\RequiresSanctumAuthentication;
 use TPG\Routine\Contracts\SignedRoute;
 
 return [
+    'registrars' => [
+        //..
+    ],
     'middleware' => [
         'contracts' => [
             RequiresAuthentication::class => [
