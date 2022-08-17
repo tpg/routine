@@ -26,7 +26,7 @@ class RoutineServiceProvider extends ServiceProvider
         }
     }
 
-    protected function loadRegistrars(Router $router): void
+    public function loadRegistrars(Router $router): void
     {
         foreach ($this->registrars() as $registrar) {
             if (! class_exists($registrar) && ! is_subclass_of($registrar, RouteRegistrar::class)) {
