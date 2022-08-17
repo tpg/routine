@@ -16,24 +16,21 @@ class RoutineServiceProvider extends ServiceProvider
             __DIR__.'/../config/routine.php' => config_path('routine.php'),
         ]);
 
-        $this->bootRoutes();
+        $this->bootRoutes(function (Router $router) {
+            foreach ($this->registrars() as $registrar) {
+                if (! class_exists($registrar) && ! is_subclass_of($registrar, RouteRegistrar::class)) {
+                    throw new \RuntimeException("Cannot map registrar {$registrar}. It is not a valid router class");
+                }
+
+                (new $registrar())->map($router);
+            }
+        });
     }
 
-    protected function bootRoutes(): void
+    protected function bootRoutes(callable $mapper): void
     {
         if (! ($this->app instanceof CachesRoutes && $this->app->routesAreCached())) {
-            $this->app->call([$this, 'loadRegistrars']);
-        }
-    }
-
-    public function loadRegistrars(Router $router): void
-    {
-        foreach ($this->registrars() as $registrar) {
-            if (! class_exists($registrar) && ! is_subclass_of($registrar, RouteRegistrar::class)) {
-                throw new \RuntimeException("Cannot map registrar {$registrar}. It is not a valid router class");
-            }
-
-            (new $registrar())->map($router);
+            $this->app->call($mapper);
         }
     }
 
