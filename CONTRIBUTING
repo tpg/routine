@@ -12,9 +12,3 @@ Contributions are **welcome** and will be fully **credited**. We only accept con
 - **One pull request per feature.** If you want to do more than one thing, send multiple pull requests.
 
 For any major features or request, please open an issue first to discuss your ideas.
-
-## Running Tests
-
-```bash
-$ ./vendor/bin/phpunit
-```
