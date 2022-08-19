@@ -11,6 +11,10 @@ return [
         //..
     ],
     'middleware' => [
+        'defaults' => [
+            'web' => ['web'],
+            'api' => ['api'],
+        ],
         'contracts' => [
             RequiresAuthentication::class => [
                 'auth',

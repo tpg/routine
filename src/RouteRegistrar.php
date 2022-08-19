@@ -19,9 +19,17 @@ abstract class RouteRegistrar
         );
 
         foreach ($mapMethods as $method) {
-            $router->middleware(...$this->middlewareFromContracts($reflection))
-                ->group(fn () => $this->{$method->name}($router));
+
+            $router->middleware([
+                ...$this->defaultMiddleware(strtolower(Str::between($method->name, 'map', 'Routes'))),
+                ...$this->middlewareFromContracts($reflection)
+            ])->group(fn () => $this->{$method->name}($router));
         }
+    }
+
+    protected function defaultMiddleware(string $key): array
+    {
+        return config('routine.middleware.defaults.'.$key, []) ?? [];
     }
 
     protected function middlewareFromContracts(\ReflectionClass $reflection): array
@@ -29,7 +37,10 @@ abstract class RouteRegistrar
         $contracts = config('routine.middleware.contracts', []);
 
         return collect($contracts)
-            ->map(fn($middleware, $contract) => $reflection->implementsInterface($contract) ? $middleware : [])
+            ->map(fn($middleware, $contract) => $reflection->implementsInterface($contract) ? $middleware : null)
+            ->values()
+            ->flatten()
+            ->whereNotNull()
             ->toArray();
     }
 }
